@@ -43,6 +43,7 @@ zero    * n  =  zero
 
 -- BIN
 
+
 data Bin : Set where
   <> : Bin
   _O : Bin → Bin
@@ -62,58 +63,52 @@ from <> = 0
 from (x O) = double (from x)
 from (x I) = suc (double  (from x))
 
-
 -- ℕ LEMMAS
 
-psuc : ∀ (n : ℕ) → suc n ≡ n + 1
-psuc zero = refl
-psuc (suc n) rewrite psuc n = refl
+le-double : ∀ (n : ℕ) → double(suc n) ≡ suc(suc(double n))
+le-double n = refl
 
-pdouble : ∀ (n : ℕ) → double(suc n) ≡ suc(suc(double n))
-pdouble n = refl
-
-pto : ∀ (n : ℕ) → to(suc n) ≡ inc(to n)
-pto n = refl
+le-to-suc : ∀ (n : ℕ) → to(suc n) ≡ inc(to n)
+le-to-suc n = refl
 
 -- BIN LEMMAS
 
-pfromO : ∀ (b : Bin) → from(b O) ≡ double(from b)
-pfromO b = refl
+le-from-shift : ∀ (b : Bin) → from (b O) ≡ double (from b)
+le-from-shift <> = refl
+le-from-shift (b O) = refl
+le-from-shift (b I) = refl
 
-pbO : ∀ (b : Bin) → from (b O) ≡ double (from b)
-pbO <> = refl
-pbO (b O) = refl
-pbO (b I) = refl
+le-from-shift2 : ∀ (b : Bin) → from (b I) ≡ suc (double (from b))
+le-from-shift2 <> = refl
+le-from-shift2 (b O) = refl
+le-from-shift2 (b I) = refl
 
-pbI : ∀ (b : Bin) → from (b I) ≡ suc (double (from b))
-pbI <> = refl
-pbI (b O) = refl
-pbI (b I) = refl
 
-p-from-inc : ∀ ( b : Bin ) → from(inc b) ≡ suc(from b)
-p-from-inc <> = refl
-p-from-inc (b O)  rewrite pbO b = refl
-p-from-inc (b I) rewrite pbI b | pdouble (from b) | p-from-inc b | pdouble (from b) = refl
+le-from-inc : ∀ ( b : Bin ) → from(inc b) ≡ suc(from b)
+le-from-inc <> = refl
+le-from-inc (b O)  rewrite le-from-shift b = refl
+le-from-inc (b I) rewrite le-from-shift2 b | le-double (from b) | 
+      le-from-inc b | le-double (from b) = refl
 
-pfi-n : ∀ (n : ℕ) → from(inc(to n)) ≡ suc(from(to n))
-pfi-n n = p-from-inc(to n)
+le-from-inc-to : ∀ (n : ℕ) → from(inc(to n)) ≡ suc(from(to n))
+le-from-inc-to n = le-from-inc(to n)
 
 fix : Bin → Bin
 fix <> = <> O
 fix b = b
+
+-- TEST
+
+-- map (λ x → (from (to x))) (range 10)
+-- 10 ∷ 9 ∷ 8 ∷ 7 ∷ 6 ∷ 5 ∷ 4 ∷ 3 ∷ 2 ∷ 1 ∷ 0 ∷ []
 
 
 -- BIN PROPOSITIONS
 
 id-from-to : ∀ (n : ℕ) → from(to n) ≡ n
 id-from-to 0 = refl
-id-from-to (suc n) rewrite pto n | pfi-n n | cong suc (id-from-to n) = refl
+id-from-to (suc n) rewrite le-to-suc n | le-from-inc-to n | cong suc (id-from-to n) = refl
 
-
-id-to-from : ∀ (b : Bin) → to(from b) ≡ fix b
-id-to-from <> = refl
-id-to-from (b O) rewrite pfromO b = {!ind.!}
-id-to-from (b I) = {!!}
 
 
 
