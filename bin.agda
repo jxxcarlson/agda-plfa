@@ -83,15 +83,16 @@ le-from-shift2 <> = refl
 le-from-shift2 (b O) = refl
 le-from-shift2 (b I) = refl
 
+-- LEMMAS WITH REWRITE
 
 le-from-inc : ∀ ( b : Bin ) → from(inc b) ≡ suc(from b)
 le-from-inc <> = refl
-le-from-inc (b O)  rewrite le-from-shift b = refl
+le-from-inc (b O)  rewrite le-from-shift b = refl 
 le-from-inc (b I) rewrite le-from-shift2 b | le-double (from b) | 
       le-from-inc b | le-double (from b) = refl
 
 le-from-inc-to : ∀ (n : ℕ) → from(inc(to n)) ≡ suc(from(to n))
-le-from-inc-to n = le-from-inc(to n)
+le-from-inc-to n =   le-from-inc(to n)
 
 fix : Bin → Bin
 fix <> = <> O
